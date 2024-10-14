@@ -40,7 +40,7 @@ password:''
 }
 
 const Login = () => {
-  const imageUrl = "https://www.imghippo.com/i/8aJJX1724907268.png";
+  const imageUrl = "";
   const [account, toggleAccount] = useState("login");
   const [signup, setSignup] = useState(signupInitialValues);
 
