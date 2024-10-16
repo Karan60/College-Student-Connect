@@ -6,9 +6,10 @@ const API_URL = 'http://localhost:8000';
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
-    timeout:10000,
+    timeout:20000,
     headers:{
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        withCredentials: true,
     }
 })
 
@@ -65,7 +66,7 @@ const processError =(error)=>{
         return{
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.requestFailure,
-            code: ""
+            code: "NO_RESPONSE"
         }
     }else{
         //something happend in setting up request that triggers an error
@@ -73,7 +74,7 @@ const processError =(error)=>{
         return{
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.networkError,
-            code: ""
+            code: "NETWORK_ISSUE"
         }
     }
 }
@@ -94,11 +95,11 @@ for (const [key, value] of Object.entries(SERVICE_URLS)){
                 }
             },
             onDownloadProgress: function (progressEvent){
-                if (showUploadProgress){
+                if (showDownloadProgress){
                     let percentageCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
                     showDownloadProgress(percentageCompleted);
                 }
-            },
+            }
         })
 }
 
