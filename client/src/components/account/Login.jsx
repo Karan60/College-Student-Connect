@@ -10,6 +10,7 @@ const Component = styled(Box)`
     0 0 40px rgba(0, 0, 255, 0.3);
   border-radius: 20px;
 `;
+
 const Image = styled("img")({
   width: 200,
   margin: "auto",
@@ -32,29 +33,53 @@ const Wrapper = styled(Box)`
     margin-top: 25px;
     margin-bottom: -20px;
   }
-`
-const signupInitialValues ={
-name:'',
-username:'',
-password:''
-}
+`;
+
+const signupInitialValues = {
+  name: "",
+  username: "",
+  password: "",
+};
 
 const Login = () => {
-  const imageUrl = "";
+  const imageUrl = ""; // Add your logo URL here
   const [account, toggleAccount] = useState("login");
   const [signup, setSignup] = useState(signupInitialValues);
+  const [error, setError] = useState(""); // To hold error messages
+  const [success, setSuccess] = useState(""); // To hold success messages
 
   const toggleSignup = () => {
     account === "signup" ? toggleAccount("login") : toggleAccount("signup");
   };
 
-  const onInputChange =(e) => {
+  const onInputChange = (e) => {
     setSignup({ ...signup, [e.target.name]: e.target.value });
-  }
+  };
 
   const signupUser = async () => {
-    let response = await API.userSignup(signup);
-  }
+    if (!signup.name || !signup.username || !signup.password) {
+      setError("All fields are required.");
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await API.userSignup(signup);
+      console.log("API Response:", response);
+
+      if (response.isSuccess) {
+        setSuccess("Signup successful!");
+        setSignup(signupInitialValues);
+      } else {
+        setError(response.msg || "Signup failed.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      setError("An error occurred during signup.");
+    }
+  };
 
   return (
     <Component>
@@ -64,25 +89,42 @@ const Login = () => {
           <Wrapper>
             <TextField variant="standard" label="Enter Username" />
             <TextField variant="standard" label="Enter Password" />
-            <Button variant="contained">login</Button>
+            <Button variant="contained">Login</Button>
             <Typography>OR</Typography>
-            <button onClick={() => toggleSignup()}>Create an account</button>
+            <button onClick={toggleSignup}>Create an account</button>
           </Wrapper>
         ) : (
           <Wrapper>
-            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='name'label="Enter Name" />
-            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='username'label="Enter Username" />
-            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='password'label="Enter Password" />
-            <Button onClick={() => signupUser()} variant="contained">SIGN-UP</Button>
+            <TextField
+              variant="standard"
+              onChange={onInputChange}
+              name="name"
+              label="Enter Name"
+            />
+            <TextField
+              variant="standard"
+              onChange={onInputChange}
+              name="username"
+              label="Enter Username"
+            />
+            <TextField
+              variant="standard"
+              onChange={onInputChange}
+              name="password"
+              label="Enter Password"
+            />
+            <Button onClick={signupUser} variant="contained">
+              SIGN-UP
+            </Button>
+            {error && <Typography color="error">{error}</Typography>}
+            {success && <Typography color="success">{success}</Typography>}
             <Typography>OR</Typography>
-            <button variant="contained" onClick={() => toggleSignup()}>
-              Already have an account
-            </button>
+            <button onClick={toggleSignup}>Already have an account</button>
           </Wrapper>
         )}
       </Box>
     </Component>
-  ); 
+  );
 };
 
 export default Login;

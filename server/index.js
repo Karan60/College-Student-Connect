@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
-import cors from 'cors';
+import cors from "cors";
 import bodyParser from "body-parser";
-import Connection from "./database/db.js";
+import Connection from "./database/db.js"; // Ensure this is correct
 import Router from "./routes/route.js";
 
 dotenv.config();
@@ -10,26 +10,25 @@ dotenv.config();
 const app = express();
 
 // CORS Configuration
-app.use(cors({
+app.use(
+  cors({
     origin: "http://localhost:3000", // Allow requests from this origin
     credentials: true,
-}));
+  })
+);
 
 // Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Enable CORS for the /signup route specifically
-app.options('/signup', cors()); // Preflight OPTIONS request handling
 
 // Define your routes
 app.use("/", Router);
 
 // Start server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () =>
-    console.log(`Server is running successfully on PORT ${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`Server is running successfully on PORT ${PORT}`);
+});
 
 // Database Connection
 const USERNAME = process.env.DB_USERNAME;
